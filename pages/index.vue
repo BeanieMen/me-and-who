@@ -22,7 +22,8 @@
         <!-- Buttons Container -->
         <div class="flex flex-col items-center relative">
           <button
-            class="px-8 py-3 bg-[#E74C3C] min-w-[7rem] w-[7rem] text-white rounded-lg text-xl hover:bg-[#c0392b] font-extrabold transition-colors duration-300 mb-4">
+            class="px-8 py-3 bg-[#E74C3C] min-w-[7rem] w-[7rem] text-white rounded-lg text-xl hover:bg-[#c0392b] font-extrabold transition-colors duration-300 mb-4"
+            @click="handleYes">
             YES!
           </button>
 
@@ -34,7 +35,19 @@
         </div>
       </div>
 
-      <!-- Popup -->
+      <div v-show="showYayCard"
+        class="absolute left-1/2 z-10 top-1/2 gap-y-10 w-full max-w-[500px] aspect-[1.4/1] bg-[#FFB7C5] rounded-lg shadow-lg p-6 flex flex-col items-center justify-center transform transition-all duration-500 ease-in-out h-[80vh] md:h-[100vh]"
+        :class="questionCardClass" :style="{ opacity: yayOpacity }">
+        <!-- Video with padding -->
+        <div class="px-5 py-3 pb-0 bg-white rounded-[10%]">
+          <video autoplay loop muted class="h-[15rem] md:h-[20rem] rounded-[10%] w-auto object-contain mb-4">
+            <source src="/yay.mp4" type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+        </div>
+        <span class="text-[#E74C3C] text-3xl md:text-4xl font-extrabold">Kuchu ji, I love you &lt;3</span>
+      </div>
+
       <!-- Popup -->
       <div class="fixed popup-enter inset-0 flex items-center justify-center z-50 pb-8" :class="popupClass">
         <div
@@ -59,6 +72,9 @@ const showQuestionCard = ref(false);
 const initialCardClass = ref('-translate-x-1/2 -translate-y-1/2 opacity-100');
 const questionCardClass = ref('-translate-x-1/2 translate-y-[200%] opacity-0');
 
+const yayOpacity = ref(0);
+const showYayCard = ref(false);
+
 const noButtonStyle = ref({
   opacity: 1,
   position: 'relative',
@@ -77,6 +93,13 @@ const startTransition = () => {
       showInitialCard.value = false;
     }, 500);
   }, 50);
+};
+
+const handleYes = () => {
+  showYayCard.value = true;
+  setTimeout(() => {
+    yayOpacity.value = 1;
+  }, 10);
 };
 
 const handleNo = () => {
