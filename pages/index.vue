@@ -33,8 +33,14 @@
             no
           </button>
         </div>
+
+        <!-- Image at bottom-right corner -->
+        <div class="absolute bottom-4 right-4">
+          <img src="/justin.png" alt="Justin Image" class="w-[10rem] h-auto rounded-[10%] " />
+        </div>
       </div>
 
+      <!-- Yay Card -->
       <div v-show="showYayCard"
         class="absolute left-1/2 z-10 top-1/2 gap-y-10 w-full max-w-[500px] aspect-[1.4/1] bg-[#FFB7C5] rounded-lg shadow-lg p-6 flex flex-col items-center justify-center transform transition-all duration-500 ease-in-out h-[80vh] md:h-[100vh]"
         :class="questionCardClass" :style="{ opacity: yayOpacity }">
@@ -53,10 +59,10 @@
         <div
           class="bg-white shadow-lg rounded-lg p-6 text-center max-w-[400px] w-full h-[80vh] transform transition-all duration-500 ease-in-out flex flex-col justify-between">
           <img src="/gaybo.jpg" alt="Image" class="h-[60%] mb-4 w-auto mx-auto object-contain rounded-[10%]" />
-          <p class="text-2xl text-[#E74C3C] font-bold">I always knew you were gaybo 😠😠😠!</p>
+          <p class="text-2xl text-[#E74C3C] font-bold">I always knew you were a gaybo 😠😠😠!</p>
           <button @click="closePopup"
             class="px-6 py-3 bg-[#E74C3C] text-white rounded-lg mt-4 hover:bg-[#c0392b] transition-colors duration-300">
-            Close
+            I mean yes
           </button>
         </div>
       </div>
@@ -115,7 +121,7 @@ const handleNo = () => {
     const yesButton = document.createElement('button');
     yesButton.textContent = 'YES!';
     yesButton.className = 'absolute px-8 py-3 bg-[#E74C3C] text-white rounded-lg text-xl hover:bg-[#c0392b] font-extrabold transition-opacity duration-500 opacity-0';
-
+    yesButton.onclick = handleYes
     const offsetX = (Math.random() - 0.5) * 250;
     const offsetY = (Math.random() + 0.2) * 175;
     yesButton.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
