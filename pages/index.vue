@@ -111,7 +111,7 @@ const handleYes = () => {
 const handleNo = () => {
   noClickCount.value++;
 
-  if (noClickCount.value >= 3) {
+  if (noClickCount.value >= 2) {
     showPopup.value = true;
     popupClass.value = 'popup-enter';  // Slide up the popup and make it visible
   }
@@ -142,6 +142,8 @@ const closePopup = () => {
   setTimeout(() => {
     showPopup.value = false;  // Hide the popup after sliding down
   }, 500);
+  handleYes()
+  
 };
 </script>
 
