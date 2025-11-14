@@ -1,11 +1,19 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { motion, AnimatePresence, Variants } from 'framer-motion';
 
 export default function Home() {
   const [isEnvelopeOpened, setIsEnvelopeOpened] = useState(false);
+  const audioRef = useRef<HTMLAudioElement>(null);
+
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.currentTime = 69; // 1:09 in seconds
+      audioRef.current.play().catch(error => console.log('Audio play failed:', error));
+    }
+  }, []);
 
   const openEnvelope = () => {
     setIsEnvelopeOpened(true);
@@ -61,7 +69,7 @@ export default function Home() {
             {/* Envelope Text */}
             <div className="absolute inset-0 flex items-center justify-center pt-20" style={{ zIndex: 3 }}>
               <span className="text-[#8B6F9C] text-4xl md:text-6xl mt-25 font-bold drop-shadow-sm">
-                Happy Birthday!
+                To the best BF!!
               </span>
             </div>
 
@@ -147,6 +155,11 @@ export default function Home() {
             </motion.div>
           )}
         </AnimatePresence>
+
+        {/* Background music */}
+        <audio ref={audioRef} loop>
+          <source src="/Matthew_Ifield_-_I_Think_They_Call_This_Love_-_Cover_(Hydr0s.com).mp3" type="audio/mpeg" />
+        </audio>
       </div>
     </div>
   );
