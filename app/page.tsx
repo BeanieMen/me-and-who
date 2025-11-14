@@ -9,10 +9,25 @@ export default function Home() {
   const audioRef = useRef<HTMLAudioElement>(null);
 
   useEffect(() => {
-    if (audioRef.current) {
+    if (isEnvelopeOpened && audioRef.current) {
       audioRef.current.currentTime = 69; // 1:09 in seconds
       audioRef.current.play().catch(error => console.log('Audio play failed:', error));
     }
+  }, [isEnvelopeOpened]);
+
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    const handleTimeUpdate = () => {
+      // Loop back to 1:09 when reaching the end
+      if (audio.currentTime >= audio.duration - 0.1) {
+        audio.currentTime = 69;
+      }
+    };
+
+    audio.addEventListener('timeupdate', handleTimeUpdate);
+    return () => audio.removeEventListener('timeupdate', handleTimeUpdate);
   }, []);
 
   const openEnvelope = () => {
@@ -142,7 +157,7 @@ export default function Home() {
               animate="visible"
             >
               <div className="bg-white/90 backdrop-blur-sm p-3 rounded-lg shadow-lg w-full py-10 flex items-center justify-center">
-                <p className="text-base md:text-lg font-bold text-[#8B6F9C] text-center leading-tight px-2">
+                <p className="text-base md:text-xl font-bold text-[#8B6F9C] text-center leading-tight px-2">
                   Happiest 18th Sush🫶🏻😋💕…here's to 8 months together and beyond. You are the most precious person in my life and I don't see my future without u. I will love and cherish you forever.🥺♾️🤭
                   <br /><br />
                   With love
@@ -157,7 +172,7 @@ export default function Home() {
         </AnimatePresence>
 
         {/* Background music */}
-        <audio ref={audioRef} loop>
+        <audio ref={audioRef}>
           <source src="/Matthew_Ifield_-_I_Think_They_Call_This_Love_-_Cover_(Hydr0s.com).mp3" type="audio/mpeg" />
         </audio>
       </div>
