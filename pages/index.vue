@@ -1,70 +1,66 @@
 <template>
   <div class="min-h-screen bg-[#FDF6EC] flex items-center justify-center p-4 overflow-hidden w-full">
-    <div class="relative w-full max-w-2xl mx-auto">
-      <!-- For You Card -->
-      <div v-show="showInitialCard"
-        class="absolute left-1/2 top-1/2 w-full max-w-[700px] aspect-[1.4/1] bg-[#E74C3C] rounded-lg shadow-lg p-6 flex items-center justify-center cursor-pointer transform transition-all duration-500 ease-in-out"
-        :class="initialCardClass" @click="startTransition">
-        <div class="absolute top-4 right-4 md:size-24 size-16">
-          <img src="/stamp.png" alt="Decorative stamp" class="w-full h-full object-contain" />
+    <div class="relative w-full max-w-2xl mx-auto h-screen">
+      <!-- Envelope (always visible) -->
+      <div class="absolute left-1/2 top-1/2 w-full max-w-[500px] aspect-[1.6/1] transform -translate-x-1/2 -translate-y-1/2 cursor-pointer"
+        @click="openEnvelope" ref="envelopeRef">
+        <!-- Envelope Body with depth -->
+        <div class="relative w-full h-full bg-[#E3F2FD] rounded-lg shadow-2xl border-4 border-[#BBDEFB]"
+          style="overflow: visible;">
+          
+          <!-- Bottom pocket flaps (for depth) -->
+          <svg class="absolute bottom-0 left-0 w-full h-full" viewBox="0 0 500 312" preserveAspectRatio="none" style="z-index: 1;">
+            <!-- Left bottom flap -->
+            <polygon points="0,312 0,200 250,280" fill="#B3D9F2" stroke="#90CAF9" stroke-width="3"/>
+            <!-- Right bottom flap -->
+            <polygon points="500,312 500,200 250,280" fill="#C5E3F6" stroke="#90CAF9" stroke-width="3"/>
+            <!-- Center bottom shadow for depth -->
+            <line x1="0" y1="312" x2="500" y2="312" stroke="#90CAF9" stroke-width="4"/>
+          </svg>
+          
+          <!-- Envelope back panel -->
+          <div class="absolute inset-0 bg-[#E3F2FD] rounded-lg border-4 border-[#BBDEFB]" style="z-index: 2;"></div>
+          
+          <!-- Envelope Text (behind flap) -->
+          <div class="absolute inset-0 flex items-center justify-center pt-20" style="z-index: 3;">
+            <span class="text-[#8B6F9C] text-4xl md:text-6xl font-caveat font-bold drop-shadow-sm">Happy Birthday!</span>
+          </div>
+
+          <!-- Envelope Flap (on top) -->
+          <div class="absolute top-0 left-0 w-full h-full transform origin-top" style="z-index: 15;"
+            :style="{ transform: envelopeFlipStyle, transition: 'transform 1s ease-out' }">
+            <!-- Top triangular flap - bigger -->
+            <svg class="absolute top-0 left-0 w-full h-[65%]" viewBox="0 0 500 325" preserveAspectRatio="none">
+              <polygon points="0,0 250,325 500,0" fill="#BBDEFB" stroke="#90CAF9" stroke-width="4"/>
+            </svg>
+            <!-- Heart at the tip of triangle -->
+            <div class="absolute top-[60%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-6xl md:text-7xl z-20">
+              ❤️
+            </div>
+          </div>
+          
         </div>
-        <span class="text-white text-3xl md:text-5xl font-caveat font-bold">For You</span>
       </div>
 
-      <!-- Question Card -->
-      <div v-show="showQuestionCard"
-        class="absolute left-1/2 top-1/2 w-full max-w-[500px] aspect-[1.4/1] bg-[#FFB7C5] rounded-lg shadow-lg p-6 flex flex-col items-center justify-center transform transition-all duration-500 ease-in-out h-[80vh] md:h-[100vh]"
-        :class="questionCardClass">
-        <h2 class="text-[#E74C3C] text-4xl md:text-5xl font-extrabold mb-20 text-center">
-          Will you be my valentine?
-        </h2>
-
-        <!-- Buttons Container -->
-        <div class="flex flex-col items-center relative">
-          <button
-            class="px-8 py-3 bg-[#E74C3C] min-w-[7rem] w-[7rem] text-white rounded-lg text-xl hover:bg-[#c0392b] font-extrabold transition-colors duration-300 mb-4"
-            @click="handleYes">
-            YES!
-          </button>
-
-          <button @click="handleNo"
-            class="px-8 py-3 bg-white text-[#E74C3C] min-w-[7rem] w-[7rem] font-light rounded-lg text-md hover:bg-gray-100 transition-all duration-300"
-            :style="noButtonStyle">
-            no
-          </button>
-        </div>
-
-        <!-- Image at bottom-right corner -->
-        <div class="absolute bottom-4 right-4">
-          <img src="/justin.png" alt="Justin Image" class="w-[10rem] h-auto rounded-[10%] " />
+      <!-- Clipping container - only shows what's above envelope -->
+      <div v-if="envelopeOpened" class="absolute left-1/2 transform -translate-x-1/2 pointer-events-none"
+        :style="{ top: 'calc(50% - 350px)', width: '100%', maxWidth: '500px', height: '350px', overflow: 'hidden', zIndex: 25 }">
+        <!-- Photo sliding up from envelope seam -->
+        <div class="absolute left-1/2 w-full max-w-[460px] transform -translate-x-1/2"
+          :style="{ top: photoTopRelative, transition: 'top 2s ease-out' }">
+          <div class="bg-white p-3 rounded-lg shadow-2xl">
+            <img src="/yay.png" alt="Birthday Photo" class="w-full h-auto object-cover rounded-md" />
+          </div>
         </div>
       </div>
 
-      <!-- Yay Card -->
-      <div v-show="showYayCard"
-        class="absolute left-1/2 z-10 top-1/2 gap-y-10 w-full max-w-[500px] aspect-[1.4/1] bg-[#FFB7C5] rounded-lg shadow-lg p-6 flex flex-col items-center justify-center transform transition-all duration-500 ease-in-out h-[80vh] md:h-[100vh]"
-        :class="questionCardClass" :style="{ opacity: yayOpacity }">
-        <!-- Video with padding -->
-        <div class="px-5 py-3 pb-0 bg-white rounded-[10%]">
-          <video autoplay loop muted class="h-[15rem] md:h-[20rem] rounded-[10%] w-auto object-contain mb-4">
-            <source src="/yay.mp4" type="video/mp4" />
-            Your browser does not support the video tag.
-          </video>
-        </div>
-        <span class="text-[#E74C3C] text-3xl md:text-4xl font-extrabold">Kuchu ji, I love you &lt;3</span>
-      </div>
-
-      <!-- Popup -->
-      <div class="fixed popup-enter inset-0 flex items-center justify-center z-50 pb-8" :class="popupClass">
-        <div
-          class="bg-white shadow-lg rounded-lg p-6 text-center max-w-[400px] w-full h-[80vh] transform transition-all duration-500 ease-in-out flex flex-col justify-between">
-          <img src="/gaybo.jpg" alt="Image" class="h-[60%] mb-4 w-auto mx-auto object-contain rounded-[10%]" />
-          <p class="text-2xl text-[#E74C3C] font-bold">I always knew you were a gaybo 😠😠😠!</p>
-          <button @click="closePopup"
-            class="px-6 py-3 bg-[#E74C3C] text-white rounded-lg mt-4 hover:bg-[#c0392b] transition-colors duration-300">
-            I mean yes
-          </button>
-        </div>
+      <!-- Text sliding down below envelope -->
+      <div v-if="envelopeOpened"
+        class="absolute left-1/2 transform -translate-x-1/2 z-20"
+        :style="{ top: textTop, opacity: textOpacity, transition: 'all 1.5s ease-out' }">
+        <p class="text-4xl md:text-5xl font-bold text-[#8B6F9C] text-center font-caveat drop-shadow-lg">
+          I love you
+        </p>
       </div>
     </div>
   </div>
@@ -73,77 +69,34 @@
 <script setup>
 import { ref } from 'vue';
 
-const showInitialCard = ref(true);
-const showQuestionCard = ref(false);
-const initialCardClass = ref('-translate-x-1/2 -translate-y-1/2 opacity-100');
-const questionCardClass = ref('-translate-x-1/2 translate-y-[200%] opacity-0');
+const envelopeOpened = ref(false);
+const envelopeFlipStyle = ref('rotateX(0deg)');
+const envelopeRef = ref(null);
+const photoTopRelative = ref('350px'); // Start from bottom of clipping container (at envelope top edge)
+const textTop = ref('50%');
+const textOpacity = ref(0);
 
-const yayOpacity = ref(0);
-const showYayCard = ref(false);
-
-const noButtonStyle = ref({
-  opacity: 1,
-  position: 'relative',
-});
-
-const noClickCount = ref(0);
-const showPopup = ref(false);
-const popupClass = ref('popup-leave');
-
-const startTransition = () => {
-  showQuestionCard.value = true;
-  setTimeout(() => {
-    initialCardClass.value = '-translate-x-1/2 translate-y-[100%] opacity-0';
-    questionCardClass.value = '-translate-x-1/2 -translate-y-1/2 opacity-100';
-    setTimeout(() => {
-      showInitialCard.value = false;
-    }, 500);
-  }, 50);
-};
-
-const handleYes = () => {
-  showYayCard.value = true;
-  setTimeout(() => {
-    yayOpacity.value = 1;
-  }, 10);
-};
-
-const handleNo = () => {
-  noClickCount.value++;
-
-  if (noClickCount.value >= 2) {
-    showPopup.value = true;
-    popupClass.value = 'popup-enter';  // Slide up the popup and make it visible
-  }
-
-  const buttonContainer = document.querySelector('.flex.flex-col.items-center');
-  for (let i = 0; i < 5; i++) {
-    const yesButton = document.createElement('button');
-    yesButton.textContent = 'YES!';
-    yesButton.className = 'absolute px-8 py-3 bg-[#E74C3C] text-white rounded-lg text-xl hover:bg-[#c0392b] font-extrabold transition-opacity duration-500 opacity-0';
-    yesButton.onclick = handleYes
-    const offsetX = (Math.random() - 0.5) * 250;
-    const offsetY = (Math.random() + 0.2) * 175;
-    yesButton.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
-
-    // Add button to the container
-    buttonContainer.appendChild(yesButton);
-
-    // Trigger opacity transition
-    setTimeout(() => {
-      yesButton.classList.remove('opacity-0');
-      yesButton.classList.add('opacity-100');
-    }, 10);
-  }
-};
-
-const closePopup = () => {
-  popupClass.value = 'popup-leave';  // Slide the popup back down and hide it
-  setTimeout(() => {
-    showPopup.value = false;  // Hide the popup after sliding down
-  }, 500);
-  handleYes()
+const openEnvelope = () => {
+  if (envelopeOpened.value) return;
   
+  // Flip the envelope flap open
+  envelopeFlipStyle.value = 'rotateX(-180deg)';
+  
+  // After flap opens, photo slides up
+  setTimeout(() => {
+    envelopeOpened.value = true;
+    
+    // Photo slides up from envelope edge into view
+    setTimeout(() => {
+      photoTopRelative.value = '70px'; // Slides up to fully visible above envelope
+      
+      // Text appears below envelope
+      setTimeout(() => {
+        textTop.value = 'calc(50% + 200px)';
+        textOpacity.value = 1;
+      }, 800);
+    }, 100);
+  }, 1000);
 };
 </script>
 
@@ -152,26 +105,5 @@ const closePopup = () => {
 
 .font-caveat {
   font-family: 'Caveat', cursive;
-}
-
-/* Adding transition for opacity */
-.transition-opacity {
-  transition: opacity 0.5s ease-in-out;
-}
-
-.transition-all {
-  transition: all 0.5s ease-in-out;
-}
-
-.popup-enter {
-  transform: translateY(2%);
-  opacity: 1;
-  transition: transform 1s ease-in-out, opacity 0.5s ease-in-out;
-}
-
-.popup-leave {
-  transform: translateY(200%);
-  opacity: 1;
-  transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
 }
 </style>
